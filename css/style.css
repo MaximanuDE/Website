@@ -365,7 +365,9 @@ p {
     align-items: center;
     gap: 8px;
 
-    padding: 9px 13px;
+    /* Same height as the .icon-btn buttons next to the nav. */
+    min-height: 42px;
+    padding: 0 13px;
     border-radius: 10px;
 
     color: var(--text-muted);
@@ -391,26 +393,9 @@ p {
     box-shadow: var(--shadow-sm);
 }
 
-.navbar-toggler {
+/* The toggler is styled as an .icon-btn; only its visibility lives here. */
+.navbar-actions .navbar-toggler {
     display: none;
-
-    padding: 8px 10px;
-
-    border: 1px solid var(--border);
-    border-radius: 10px;
-
-    background: var(--surface);
-    color: var(--text);
-
-    font-size: 1.25rem;
-    line-height: 1;
-
-    transition: box-shadow var(--transition);
-}
-
-.navbar-toggler:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(226, 84, 11, 0.14);
 }
 
 @media (max-width: 991.98px) {
@@ -418,8 +403,8 @@ p {
         flex-wrap: wrap;
     }
 
-    .navbar-toggler {
-        display: block;
+    .navbar-actions .navbar-toggler {
+        display: grid;
     }
 
     /*
@@ -480,13 +465,16 @@ p {
         background var(--transition);
 }
 
-.icon-btn:hover {
-    color: var(--primary);
-    transform: translateY(-1px);
+/* Hover only where a pointer can hover; on touch it would stick after a tap. */
+@media (hover: hover) {
+    .icon-btn:hover {
+        color: var(--primary);
+        transform: translateY(-1px);
 
-    border-color: rgba(226, 84, 11, 0.3);
+        border-color: rgba(226, 84, 11, 0.3);
 
-    box-shadow: var(--shadow-sm);
+        box-shadow: var(--shadow-sm);
+    }
 }
 
 .icon-btn:focus-visible {
