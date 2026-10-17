@@ -108,16 +108,57 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () 
     }
 });
 
+const COLLAPSE_DURATION = 350;
+
+// Mirrors Bootstrap's collapse plugin: animate the real height from/to
+// the menu's scrollHeight, then let the open menu size itself again.
+function runCollapse(menu, show) {
+    const finish = () => {
+        window.clearTimeout(menu._collapseTimer);
+        menu.removeEventListener("transitionend", menu._collapseEnd);
+
+        menu.classList.remove("collapsing");
+        menu.classList.add("collapse");
+        menu.classList.toggle("show", show);
+        menu.style.height = "";
+    };
+
+    if (!show) {
+        menu.style.height = `${menu.getBoundingClientRect().height}px`;
+        menu.offsetHeight; // force reflow so the transition starts here
+    }
+
+    menu.classList.remove("collapse", "show");
+    menu.classList.add("collapsing");
+
+    if (show) {
+        menu.offsetHeight;
+        menu.style.height = `${menu.scrollHeight}px`;
+    } else {
+        menu.style.height = "";
+    }
+
+    menu._collapseEnd = (event) => {
+        if (event.target === menu && event.propertyName === "height") {
+            finish();
+        }
+    };
+
+    menu.addEventListener("transitionend", menu._collapseEnd);
+    menu._collapseTimer = window.setTimeout(finish, COLLAPSE_DURATION + 50);
+}
+
 function toggleNav(button) {
     const menu = document.getElementById(button.getAttribute("aria-controls"));
 
-    if (!menu) {
+    if (!menu || menu.classList.contains("collapsing")) {
         return;
     }
 
-    const isOpen = menu.classList.toggle("is-open");
+    const show = !menu.classList.contains("show");
 
-    button.setAttribute("aria-expanded", String(isOpen));
+    button.setAttribute("aria-expanded", String(show));
+    runCollapse(menu, show);
 }
 
 document.addEventListener("click", (event) => {
