@@ -1306,15 +1306,6 @@ footer a:hover {
     color: var(--border);
 }
 
-.footer-social {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-
-    margin-bottom: 18px;
-}
-
 .footer-copy {
     margin: 0;
 }
