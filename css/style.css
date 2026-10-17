@@ -1,8 +1,15 @@
+/*
+   The inline script in each page's <head> always sets data-theme to
+   "light" or "dark" (from localStorage or the system preference), so
+   the dark tokens only need to exist once.
+*/
+
 :root {
     --bg: #f6f4ef;
     --bg-alt: #ece7db;
     --surface: rgba(255, 255, 255, 0.72);
     --surface-solid: #ffffff;
+    --navbar-bg: rgba(246, 244, 239, 0.78);
     --text: #14161b;
     --text-muted: #5c6068;
     --border: rgba(20, 22, 27, 0.1);
@@ -22,7 +29,6 @@
     --shadow-md: 0 16px 42px rgba(20, 22, 27, 0.09);
     --shadow-lg: 0 28px 80px rgba(20, 22, 27, 0.14);
 
-    --radius-sm: 12px;
     --radius-md: 16px;
     --radius-lg: 20px;
 
@@ -38,31 +44,10 @@
         sans-serif;
     --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
+    --gutter: clamp(11px, 2.5vw, 20px);
     --transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
 
     color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --bg: #0a0c11;
-        --bg-alt: #10131a;
-        --surface: rgba(19, 22, 30, 0.72);
-        --surface-solid: #12151d;
-        --text: #f3f1ea;
-        --text-muted: #979ca7;
-        --border: rgba(255, 255, 255, 0.09);
-
-        --primary: #ff7a3d;
-        --primary-2: #ffc169;
-        --accent: #2fd4bf;
-
-        --shadow-sm: 0 6px 22px rgba(0, 0, 0, 0.28);
-        --shadow-md: 0 16px 42px rgba(0, 0, 0, 0.36);
-        --shadow-lg: 0 28px 80px rgba(0, 0, 0, 0.5);
-
-        color-scheme: dark;
-    }
 }
 
 :root[data-theme="dark"] {
@@ -70,6 +55,7 @@
     --bg-alt: #10131a;
     --surface: rgba(19, 22, 30, 0.72);
     --surface-solid: #12151d;
+    --navbar-bg: rgba(10, 12, 17, 0.78);
     --text: #f3f1ea;
     --text-muted: #979ca7;
     --border: rgba(255, 255, 255, 0.09);
@@ -122,9 +108,6 @@ body {
     color: var(--text);
 
     font-family: var(--font-body);
-    font-size: 1rem;
-    font-weight: 400;
-
     line-height: 1.7;
 
     -webkit-tap-highlight-color: transparent;
@@ -138,25 +121,14 @@ body {
     background: rgba(226, 84, 11, 0.24);
 }
 
-img,
-svg {
-    vertical-align: middle;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-}
-
 a {
     color: inherit;
     text-decoration: none;
-    transition:
-        color var(--transition),
-        opacity var(--transition);
+    transition: color var(--transition);
 }
 
-a:hover {
+/* :where() keeps this at zero specificity, so any component's own color wins. */
+:where(a:hover) {
     color: var(--primary);
 }
 
@@ -166,15 +138,10 @@ button {
     color: inherit;
 
     font: inherit;
-    text-transform: none;
 }
 
 button:not(:disabled) {
     cursor: pointer;
-}
-
-:focus:not(:focus-visible) {
-    outline: 0;
 }
 
 ul,
@@ -184,21 +151,12 @@ ol {
 }
 
 hr {
-    margin: 1rem 0;
+    margin: 24px 0;
 
     border: 0;
     border-top: 1px solid currentColor;
 
-    color: inherit;
     opacity: 0.25;
-}
-
-/* Layout */
-
-.container {
-    width: min(1180px, calc(100% - 40px));
-    margin-inline: auto;
-    padding-inline: 12px;
 }
 
 /* Typography */
@@ -206,9 +164,7 @@ hr {
 h1,
 h2,
 h3,
-h4,
-h5,
-h6 {
+h4 {
     margin: 0 0 0.5rem;
 
     color: var(--text);
@@ -234,17 +190,14 @@ h4 {
     font-size: min(calc(1.275rem + 0.3vw), 1.5rem);
 }
 
-h5 {
-    font-size: 1.25rem;
-}
-
-h6 {
-    font-size: 1rem;
-}
-
 p {
     margin: 0 0 1rem;
     color: var(--text-muted);
+}
+
+/* A paragraph never adds space after the last line of its container. */
+p:last-child {
+    margin-bottom: 0;
 }
 
 .lead {
@@ -253,6 +206,214 @@ p {
 
 .mono {
     font-family: var(--font-mono);
+}
+
+/* Layout */
+
+.container {
+    width: min(1180px, 100% - 2 * var(--gutter));
+    margin-inline: auto;
+    padding-inline: 12px;
+}
+
+.section {
+    padding: clamp(56px, 7vw, 96px) 0;
+}
+
+/* Neighbouring blocks share one gap instead of stacking two. */
+.section + .section,
+.page-header + .section {
+    padding-top: 0;
+}
+
+.section-heading {
+    max-width: 720px;
+    margin: 0 auto clamp(32px, 5vw, 50px);
+
+    text-align: center;
+}
+
+.section-heading--start {
+    margin: 0;
+    text-align: left;
+}
+
+.section-heading h2 {
+    margin-bottom: 14px;
+
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    line-height: 1.08;
+}
+
+.section-heading p {
+    font-size: 1.03rem;
+}
+
+.section-actions {
+    margin-top: 32px;
+    text-align: center;
+}
+
+.split {
+    display: grid;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (min-width: 992px) {
+    .split {
+        grid-template-columns: 7fr 5fr;
+    }
+}
+
+.about-copy p {
+    line-height: 2;
+}
+
+.bento {
+    display: grid;
+    gap: 18px;
+}
+
+@media (min-width: 768px) {
+    .bento {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .bento--2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.project-grid {
+    display: grid;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .project-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Buttons */
+
+.icon-btn {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--surface);
+    color: var(--text);
+
+    font-size: 1.05rem;
+    line-height: 1;
+
+    transition:
+        color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition),
+        border-color var(--transition);
+}
+
+/* Hover only where a pointer can hover; on touch it would stick after a tap. */
+@media (hover: hover) {
+    .icon-btn:hover {
+        color: var(--primary);
+        transform: translateY(-1px);
+
+        border-color: rgba(226, 84, 11, 0.3);
+
+        box-shadow: var(--shadow-sm);
+    }
+}
+
+.icon-btn:focus-visible {
+    outline: none;
+
+    box-shadow: 0 0 0 4px rgba(226, 84, 11, 0.15);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 46px;
+    padding: 11px 22px;
+
+    border: 1px solid transparent;
+    border-radius: 11px;
+
+    font-weight: 600;
+    line-height: 1.5;
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        background var(--transition),
+        border-color var(--transition);
+}
+
+@media (max-width: 479.98px) {
+    .btn {
+        width: 100%;
+    }
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn:focus-visible {
+    outline: none;
+
+    box-shadow: 0 0 0 4px rgba(226, 84, 11, 0.2);
+}
+
+.btn-primary {
+    border: 0;
+
+    background: var(--primary);
+    color: #ffffff;
+
+    box-shadow: 0 10px 26px rgba(226, 84, 11, 0.28);
+}
+
+.btn-primary:hover {
+    background: color-mix(in srgb, var(--primary) 88%, black);
+
+    box-shadow: 0 16px 36px rgba(226, 84, 11, 0.36);
+}
+
+.btn-secondary {
+    border-color: var(--border);
+
+    background: var(--surface);
+    color: var(--text);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+    border-color: rgba(226, 84, 11, 0.24);
+
+    background: var(--surface-solid);
+
+    box-shadow: var(--shadow-md);
 }
 
 /* Header */
@@ -264,15 +425,14 @@ p {
 
     /*
        padding, not min-height: the bar's height must always equal its
-       content's height. A min-height taller than the collapsed content
-       leaves slack that disappears once the mobile menu opens, and the
-       brand row visibly jumps.
+       content's height, or opening the mobile menu makes the brand row
+       jump.
     */
-    padding-block: 15px;
+    padding-block: clamp(12px, 1.5vw, 15px);
 
     border-bottom: 1px solid var(--border);
 
-    background: rgba(246, 244, 239, 0.78);
+    background: var(--navbar-bg);
 
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -282,21 +442,11 @@ p {
         border-color var(--transition);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .navbar {
-        background: rgba(10, 12, 17, 0.78);
-    }
-}
-
-[data-theme="dark"] .navbar {
-    background: rgba(10, 12, 17, 0.78);
-}
-
 .navbar > .container {
     display: flex;
-    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
+    column-gap: 16px;
 }
 
 .navbar-brand {
@@ -304,20 +454,11 @@ p {
     align-items: baseline;
     gap: 2px;
 
-    margin-right: 16px;
-    padding-block: 5px;
-
-    color: var(--text);
-
     font-family: var(--font-mono);
     font-size: 1.08rem;
     font-weight: 600;
     letter-spacing: -0.01em;
     white-space: nowrap;
-}
-
-.navbar-brand:hover {
-    color: var(--primary);
 }
 
 .navbar-brand .prompt {
@@ -344,17 +485,19 @@ p {
     gap: 8px;
 }
 
+.navbar-toggler {
+    display: none;
+}
+
 .navbar-collapse {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
+    margin-left: auto;
 }
 
 .navbar-nav {
     display: flex;
     gap: 6px;
 
-    margin: 0 0 0 auto;
+    margin: 0;
     padding: 0;
 
     list-style: none;
@@ -393,17 +536,12 @@ p {
     box-shadow: var(--shadow-sm);
 }
 
-/* The toggler is styled as an .icon-btn; only its visibility lives here. */
-.navbar-actions .navbar-toggler {
-    display: none;
-}
-
 @media (max-width: 991.98px) {
     .navbar > .container {
         flex-wrap: wrap;
     }
 
-    .navbar-actions .navbar-toggler {
+    .navbar-toggler {
         display: grid;
     }
 
@@ -414,7 +552,6 @@ p {
        height again so the open menu is never clipped.
     */
     .navbar-collapse {
-        display: block;
         flex-basis: 100%;
     }
 
@@ -437,71 +574,23 @@ p {
     }
 }
 
-/* Icon buttons (theme toggle, GitHub link) */
-
-.icon-btn {
-    display: grid;
-    flex-shrink: 0;
-    place-items: center;
-
-    width: 42px;
-    height: 42px;
-
-    border: 1px solid var(--border);
-    border-radius: 10px;
-
-    background: var(--surface);
-    color: var(--text);
-
-    font-size: 1.05rem;
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        transform var(--transition),
-        box-shadow var(--transition),
-        border-color var(--transition),
-        background var(--transition);
-}
-
-/* Hover only where a pointer can hover; on touch it would stick after a tap. */
-@media (hover: hover) {
-    .icon-btn:hover {
-        color: var(--primary);
-        transform: translateY(-1px);
-
-        border-color: rgba(226, 84, 11, 0.3);
-
-        box-shadow: var(--shadow-sm);
-    }
-}
-
-.icon-btn:focus-visible {
-    outline: none;
-
-    box-shadow: 0 0 0 4px rgba(226, 84, 11, 0.15);
-}
-
-/* Hero */
+/* Hero and page headers */
 
 .hero,
 .page-header,
 .error-page {
     position: relative;
     isolation: isolate;
-    overflow: hidden;
 
-    padding: clamp(80px, 12vw, 150px) 0 90px;
+    padding: clamp(72px, 12vw, 150px) 0 clamp(60px, 8vw, 90px);
 
     text-align: center;
 }
 
 /*
-   Glow and dot grid share one layer that fades out with a mask, rather
-   than an opaque overlay in the page color or a separately clipped glow.
-   Nothing gets cut off at the section's bottom edge, which matters on
-   phones where the section is shorter than the glow.
+   Glow and dot grid share one layer that fades out with a mask, so
+   nothing is cut off at the section's bottom edge and the page
+   background shows through evenly.
 */
 .hero::after,
 .page-header::after,
@@ -536,10 +625,7 @@ p {
     margin: 22px auto;
 
     font-size: clamp(2.8rem, 6.4vw, 5.6rem);
-
-    font-weight: 700;
     line-height: 1;
-
     letter-spacing: -0.045em;
 
     background: var(--gradient);
@@ -560,33 +646,9 @@ p {
     max-width: 660px;
     margin: 0 auto;
 
-    color: var(--text-muted);
-
     font-size: clamp(1rem, 2vw, 1.2rem);
 
     animation: fade-up 700ms 100ms ease both;
-}
-
-/* Eyebrow */
-
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    margin-bottom: 14px;
-
-    color: var(--accent);
-
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-.eyebrow::before {
-    content: "//";
-    color: var(--primary);
 }
 
 .hero-badge {
@@ -604,7 +666,7 @@ p {
     color: var(--text-muted);
 
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: clamp(0.75rem, 2.5vw, 0.82rem);
     font-weight: 500;
 
     box-shadow: var(--shadow-sm);
@@ -643,6 +705,26 @@ p {
     .hero-actions {
         flex-direction: row;
     }
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 14px;
+
+    color: var(--accent);
+
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.eyebrow::before {
+    content: "//";
+    color: var(--primary);
 }
 
 /* Terminal mock */
@@ -725,134 +807,25 @@ p {
     animation: blink 1s step-end infinite;
 }
 
-/* Sections */
-
-.section {
-    position: relative;
-    padding: clamp(56px, 7vw, 96px) 0;
-}
-
-/* Consecutive sections share one gap instead of stacking two. */
-.section + .section {
-    padding-top: 0;
-}
-
-.section-heading {
-    max-width: 720px;
-    margin: 0 auto 50px;
-
-    text-align: center;
-}
-
-.section.section--flush {
-    padding-top: 0;
-}
-
-.section-heading.section-heading--start {
-    margin: 0;
-    text-align: left;
-}
-
-.section-heading h2 {
-    margin-bottom: 14px;
-
-    font-size: clamp(1.9rem, 3.6vw, 3rem);
-
-    line-height: 1.08;
-}
-
-.section-heading p {
-    margin: 0;
-    font-size: 1.03rem;
-}
-
-.section-actions {
-    text-align: center;
-}
-
-.bento + .section-actions {
-    margin-top: 32px;
-}
-
-/* Split layouts (about, contact) */
-
-.split {
-    display: grid;
-    gap: 24px;
-    align-items: start;
-}
-
-@media (min-width: 992px) {
-    .split {
-        grid-template-columns: 7fr 5fr;
-    }
-}
-
-.about-copy p {
-    line-height: 2;
-}
-
-.split > .tile {
-    height: auto;
-}
-
-/* Bento grid */
-
-.bento {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-}
-
-.bento.bento--2 {
-    grid-template-columns: repeat(2, 1fr);
-}
-
-.bento-item.span-full {
-    grid-column: 1 / -1;
-}
-
-.project-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-}
-
-@media (max-width: 767.98px) {
-    .bento,
-    .bento.bento--2,
-    .project-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (min-width: 992px) {
-    .project-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Cards */
+/* Surfaces: cards, tiles and content panels */
 
 .card,
-.tile {
-    position: relative;
-
-    height: 100%;
-
-    overflow: hidden;
-
+.tile,
+.contact-card,
+.legal-content {
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
 
     background: var(--surface);
-    color: var(--text);
 
     box-shadow: var(--shadow-sm);
 
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+}
 
+.card,
+.tile {
     transition:
         transform var(--transition),
         box-shadow var(--transition),
@@ -868,24 +841,31 @@ p {
     box-shadow: var(--shadow-lg);
 }
 
+.tile {
+    padding: 28px;
+}
+
+.tile h3 {
+    font-size: 1.18rem;
+}
+
+.tile .feature-icon {
+    margin-bottom: 18px;
+}
+
+.tile:hover .feature-icon {
+    transform: scale(1.06) rotate(-2deg);
+
+    box-shadow: 0 12px 32px rgba(226, 84, 11, 0.2);
+}
+
+/* Project card: tags and button sit at the bottom so buttons line up. */
 .card {
     display: flex;
     flex-direction: column;
-}
-
-.card-body {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
     align-items: flex-start;
 
-    padding: 24px;
-}
-
-@media (min-width: 992px) {
-    .card-body {
-        padding: 32px;
-    }
+    padding: clamp(24px, 3vw, 32px);
 }
 
 .card-head {
@@ -897,10 +877,6 @@ p {
     margin-bottom: 24px;
 }
 
-.card-head .feature-icon {
-    margin-bottom: 0;
-}
-
 .card-title {
     font-size: min(calc(1.3rem + 0.6vw), 1.75rem);
 }
@@ -910,56 +886,29 @@ p {
     margin-bottom: 24px;
 }
 
-.tile {
-    padding: 28px;
+.contact-card {
+    max-width: 560px;
+    margin-inline: auto;
+    padding: clamp(24px, 4vw, 34px);
 }
 
-.tile-wide {
+.contact-item {
     display: flex;
-    flex-direction: column;
-    gap: 18px;
-    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
 }
 
-@media (min-width: 576px) {
-    .tile-wide {
-        flex-direction: row;
-        align-items: center;
-    }
+.contact-item h3 {
+    font-size: 1rem;
 }
-
-.tile-wide > .btn {
-    flex-shrink: 0;
-}
-
-.tile-wide .status-badge {
-    margin-bottom: 16px;
-}
-
-.tile-wide h3 {
-    margin-top: 16px;
-}
-
-.tile h3 {
-    margin-bottom: 8px;
-
-    font-size: 1.18rem;
-}
-
-.tile p:last-child {
-    margin-bottom: 0;
-}
-
-/* Feature icons */
 
 .feature-icon {
     display: grid;
+    flex-shrink: 0;
     place-items: center;
 
     width: 56px;
     height: 56px;
-
-    margin-bottom: 18px;
 
     border: 1px solid rgba(226, 84, 11, 0.16);
     border-radius: 14px;
@@ -979,14 +928,6 @@ p {
         transform var(--transition),
         box-shadow var(--transition);
 }
-
-.tile:hover .feature-icon {
-    transform: scale(1.06) rotate(-2deg);
-
-    box-shadow: 0 12px 32px rgba(226, 84, 11, 0.2);
-}
-
-/* Status badges & tags */
 
 .status-badge {
     display: inline-flex;
@@ -1021,9 +962,13 @@ p {
     box-shadow: 0 0 0 3px rgba(23, 153, 138, 0.18);
 }
 
-.tag {
-    display: inline-block;
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
 
+.tag {
     padding: 5px 11px;
 
     border: 1px solid var(--border);
@@ -1038,162 +983,13 @@ p {
     font-weight: 500;
 }
 
-.tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.tag-list--center {
-    justify-content: center;
-}
-
-/* Feature & contact cards */
-
-.contact-card {
-    max-width: 560px;
-    margin-inline: auto;
-}
-
-.feature-card,
-.contact-card {
-    padding: clamp(24px, 4vw, 34px);
-
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-
-    background: var(--surface);
-
-    box-shadow: var(--shadow-sm);
-
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-}
-
-.contact-card + .contact-card,
-.section-heading + .contact-card {
-    margin-top: 24px;
-}
-
-.contact-card hr {
-    margin: 24px 0;
-}
-
-.contact-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-}
-
-.contact-item .feature-icon {
-    flex-shrink: 0;
-    margin-bottom: 0;
-}
-
-.contact-item h3 {
-    font-size: 1rem;
-}
-
-.contact-item p {
-    margin: 0;
-}
-
-/* Buttons */
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    min-height: 46px;
-
-    padding: 11px 22px;
-
-    border: 1px solid transparent;
-    border-radius: 11px;
-
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.5;
-    text-align: center;
-    vertical-align: middle;
-
-    cursor: pointer;
-    user-select: none;
-
-    transition:
-        transform var(--transition),
-        box-shadow var(--transition),
-        background var(--transition),
-        border-color var(--transition);
-}
-
-.btn:focus-visible {
-    outline: none;
-
-    box-shadow: 0 0 0 4px rgba(226, 84, 11, 0.2);
-}
-
-.btn-primary {
-    border: 0;
-
-    background: var(--primary);
-
-    color: #ffffff;
-
-    box-shadow: 0 10px 26px rgba(226, 84, 11, 0.28);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-
-    background: var(--primary);
-    background: color-mix(in srgb, var(--primary) 88%, black);
-    color: #ffffff;
-
-    box-shadow: 0 16px 36px rgba(226, 84, 11, 0.36);
-}
-
-.btn-secondary {
-    border: 1px solid var(--border);
-
-    background: var(--surface);
-
-    color: var(--text);
-
-    box-shadow: var(--shadow-sm);
-}
-
-.btn-secondary:hover {
-    transform: translateY(-2px);
-
-    border-color: rgba(226, 84, 11, 0.24);
-
-    background: var(--surface-solid);
-
-    color: var(--text);
-
-    box-shadow: var(--shadow-md);
-}
-
-/* Legal content */
+/* Legal pages */
 
 .legal-content {
     width: min(860px, 100%);
     margin-inline: auto;
 
-    padding: clamp(28px, 5vw, 56px);
-
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-
-    background: var(--surface);
-
-    box-shadow: var(--shadow-sm);
-
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    padding: clamp(24px, 5vw, 56px);
 }
 
 .legal-content h2 {
@@ -1221,29 +1017,21 @@ p {
     font-size: 1rem;
 }
 
-.legal-content p {
-    color: var(--text-muted);
-}
-
 .legal-content strong {
     color: var(--text);
 }
 
-.legal-content .legal-updated {
+.legal-updated {
     margin-top: 48px;
 }
 
 /* Error page */
 
 .error-code {
-    margin: 0;
-
     font-family: var(--font-heading);
     font-size: clamp(5.5rem, 18vw, 10rem);
-
     font-weight: 700;
     line-height: 0.9;
-
     letter-spacing: -0.03em;
 
     background: var(--gradient);
@@ -1261,8 +1049,6 @@ p {
 
 .error-page h1 {
     margin-top: 24px;
-
-    font-size: min(calc(1.375rem + 1.5vw), 2.5rem);
     letter-spacing: -0.04em;
 }
 
@@ -1281,14 +1067,6 @@ footer {
     text-align: center;
 }
 
-footer a {
-    color: var(--text-muted);
-}
-
-footer a:hover {
-    color: var(--primary);
-}
-
 .footer-links {
     display: flex;
     flex-wrap: wrap;
@@ -1297,33 +1075,27 @@ footer a:hover {
     gap: 8px 18px;
 
     margin-bottom: 10px;
+
+    color: var(--text-muted);
 }
 
 .footer-links .divider {
     color: var(--border);
 }
 
-.footer-copy {
-    margin: 0;
-}
+/*
+   Reveal-on-scroll. main.js sets [data-reveal] only once it can reveal
+   the items again. The reveal is a one-off animation on `translate`
+   rather than a transition on `transform`, so it never overrides the
+   hover lift or the hover transitions of the element it is on.
+*/
 
-/* Reveal-on-scroll */
-
-.reveal {
-    opacity: 1;
-}
-
-[data-reveal] .reveal {
+[data-reveal] .reveal:not(.is-visible) {
     opacity: 0;
-    transform: translateY(18px);
-    transition:
-        opacity 600ms ease,
-        transform 600ms ease;
 }
 
-[data-reveal] .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
+.reveal.is-visible {
+    animation: fade-up 600ms ease backwards;
 }
 
 /* Animations */
@@ -1331,12 +1103,7 @@ footer a:hover {
 @keyframes fade-up {
     from {
         opacity: 0;
-        transform: translateY(22px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
+        translate: 0 22px;
     }
 }
 
@@ -1357,83 +1124,6 @@ footer a:hover {
     }
 }
 
-/* Tablet */
-
-@media (max-width: 991.98px) {
-    .container {
-        width: min(100% - 34px, 760px);
-    }
-
-    .navbar {
-        padding-block: 12px;
-    }
-
-    .hero,
-    .page-header,
-    .error-page {
-        padding-top: 100px;
-        padding-bottom: 75px;
-    }
-
-    .section {
-        padding: 72px 0;
-    }
-}
-
-/* Mobile */
-
-@media (max-width: 767.98px) {
-    .container {
-        width: calc(100% - 28px);
-    }
-
-    .hero,
-    .page-header,
-    .error-page {
-        padding-top: 82px;
-        padding-bottom: 60px;
-    }
-
-    .section {
-        padding: 56px 0;
-    }
-
-    .section-heading {
-        margin-bottom: 32px;
-    }
-
-    .legal-content {
-        padding: 25px;
-        border-radius: 20px;
-    }
-
-    .btn {
-        min-height: 48px;
-    }
-}
-
-/* Small phones */
-
-@media (max-width: 479.98px) {
-    .container {
-        width: calc(100% - 22px);
-    }
-
-    .hero,
-    .page-header,
-    .error-page {
-        padding-top: 72px;
-    }
-
-    .hero-badge {
-        font-size: 0.75rem;
-    }
-
-    .btn {
-        width: 100%;
-    }
-}
-
 /* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1447,10 +1137,5 @@ footer a:hover {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-    }
-
-    .reveal {
-        opacity: 1;
-        transform: none;
     }
 }

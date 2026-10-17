@@ -108,44 +108,29 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () 
     }
 });
 
-const COLLAPSE_DURATION = 350;
-
-// Mirrors Bootstrap's collapse plugin: animate the real height from/to
-// the menu's scrollHeight, then let the open menu size itself again.
+// Same approach as Bootstrap's collapse plugin: while .collapsing is set,
+// the CSS transitions the real height between 0 and the menu's
+// scrollHeight; afterwards the fixed height is dropped again.
 function runCollapse(menu, show) {
-    const finish = () => {
-        window.clearTimeout(menu._collapseTimer);
-        menu.removeEventListener("transitionend", menu._collapseEnd);
-
-        menu.classList.remove("collapsing");
-        menu.classList.add("collapse");
-        menu.classList.toggle("show", show);
-        menu.style.height = "";
-    };
-
     if (!show) {
-        menu.style.height = `${menu.getBoundingClientRect().height}px`;
-        menu.offsetHeight; // force reflow so the transition starts here
+        menu.style.height = `${menu.offsetHeight}px`;
     }
 
     menu.classList.remove("collapse", "show");
     menu.classList.add("collapsing");
+    menu.offsetHeight; // force a reflow so the transition starts from here
 
-    if (show) {
-        menu.offsetHeight;
-        menu.style.height = `${menu.scrollHeight}px`;
-    } else {
+    menu.style.height = show ? `${menu.scrollHeight}px` : "";
+
+    // The duration comes from the CSS, so reduced motion is respected too.
+    const duration = parseFloat(getComputedStyle(menu).transitionDuration) * 1000;
+
+    window.setTimeout(() => {
+        menu.classList.remove("collapsing");
+        menu.classList.add("collapse");
+        menu.classList.toggle("show", show);
         menu.style.height = "";
-    }
-
-    menu._collapseEnd = (event) => {
-        if (event.target === menu && event.propertyName === "height") {
-            finish();
-        }
-    };
-
-    menu.addEventListener("transitionend", menu._collapseEnd);
-    menu._collapseTimer = window.setTimeout(finish, COLLAPSE_DURATION + 50);
+    }, duration);
 }
 
 function toggleNav(button) {
