@@ -799,6 +799,10 @@ p {
     text-align: center;
 }
 
+.bento + .section-actions {
+    margin-top: 32px;
+}
+
 /* Split layouts (about, contact) */
 
 .split {
@@ -851,6 +855,12 @@ p {
     }
 }
 
+@media (min-width: 992px) {
+    .project-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 /* Cards */
 
 .card,
@@ -893,7 +903,7 @@ p {
 
 @media (min-width: 992px) {
     .card-body {
-        padding: 48px;
+        padding: 32px;
     }
 }
 
@@ -915,6 +925,19 @@ p {
 
 .card .tag-list {
     margin-bottom: 24px;
+}
+
+.card-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    min-height: 46px;
+
+    color: var(--text-muted);
+
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
 }
 
 .tile {
