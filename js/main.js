@@ -13,7 +13,7 @@ function getPreferredTheme() {
 }
 
 function applyTheme(theme) {
-    document.documentElement.setAttribute("data-bs-theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
 
     const icon = document.querySelector("#themeToggle i");
 
@@ -108,14 +108,33 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () 
     }
 });
 
+function toggleNav(button) {
+    const menu = document.getElementById(button.getAttribute("aria-controls"));
+
+    if (!menu) {
+        return;
+    }
+
+    const isOpen = menu.classList.toggle("is-open");
+
+    button.setAttribute("aria-expanded", String(isOpen));
+}
+
 document.addEventListener("click", (event) => {
+    const navToggle = event.target.closest("#navToggle");
+
+    if (navToggle) {
+        toggleNav(navToggle);
+        return;
+    }
+
     const toggle = event.target.closest("#themeToggle");
 
     if (!toggle) {
         return;
     }
 
-    const next = document.documentElement.getAttribute("data-bs-theme") === "dark"
+    const next = document.documentElement.getAttribute("data-theme") === "dark"
         ? "light"
         : "dark";
 

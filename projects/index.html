@@ -32,7 +32,6 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
     >
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/style.css">
 
@@ -42,7 +41,7 @@
             var theme = stored === "light" || stored === "dark"
                 ? stored
                 : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-            document.documentElement.setAttribute("data-bs-theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
         })();
     </script>
 </head>
@@ -66,112 +65,106 @@
             </div>
         </section>
 
-        <section class="section pt-0">
+        <section class="section section--flush">
             <div class="container">
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <article class="card h-100 reveal">
-                            <div class="card-body p-4 p-lg-5">
-                                <div class="d-flex align-items-center justify-content-between mb-4">
-                                    <div class="feature-icon mb-0">
-                                        <i class="bi bi-gem"></i>
-                                    </div>
-
-                                    <span class="status-badge">Active</span>
+                <div class="project-grid">
+                    <article class="card reveal">
+                        <div class="card-body">
+                            <div class="card-head">
+                                <div class="feature-icon">
+                                    <i class="bi bi-gem"></i>
                                 </div>
 
-                                <h2 class="h3 fw-bold">SolunaMC</h2>
-
-                                <p class="text-body-secondary">
-                                    A Minecraft network focused on community,
-                                    gameplay and unique experiences.
-                                </p>
-
-                                <div class="d-flex flex-wrap gap-2 mb-4">
-                                    <span class="tag">Community</span>
-                                    <span class="tag">Minecraft</span>
-                                    <span class="tag">Network</span>
-                                </div>
-
-                                <a href="https://solunamc.de"
-                                   class="btn btn-primary"
-                                   target="_blank"
-                                   rel="noopener noreferrer">
-                                    Visit SolunaMC
-                                    <i class="bi bi-arrow-up-right ms-1"></i>
-                                </a>
+                                <span class="status-badge">Active</span>
                             </div>
-                        </article>
-                    </div>
 
-                    <div class="col-md-6">
-                        <article class="card h-100 reveal">
-                            <div class="card-body p-4 p-lg-5">
-                                <div class="d-flex align-items-center justify-content-between mb-4">
-                                    <div class="feature-icon mb-0">
-                                        <i class="bi bi-window"></i>
-                                    </div>
+                            <h2 class="card-title">SolunaMC</h2>
 
-                                    <span class="status-badge">Active</span>
-                                </div>
+                            <p>
+                                A Minecraft network focused on community,
+                                gameplay and unique experiences.
+                            </p>
 
-                                <h2 class="h3 fw-bold">My Website</h2>
-
-                                <p class="text-body-secondary">
-                                    My personal website featuring information
-                                    about me, my work and my projects.
-                                </p>
-
-                                <div class="d-flex flex-wrap gap-2 mb-4">
-                                    <span class="tag">Personal</span>
-                                    <span class="tag">Web</span>
-                                    <span class="tag">Portfolio</span>
-                                </div>
-
-                                <a href="https://maxi.maximanu.de"
-                                   class="btn btn-primary"
-                                   target="_blank"
-                                   rel="noopener noreferrer">
-                                    Visit Website
-                                    <i class="bi bi-arrow-up-right ms-1"></i>
-                                </a>
+                            <div class="tag-list">
+                                <span class="tag">Community</span>
+                                <span class="tag">Minecraft</span>
+                                <span class="tag">Network</span>
                             </div>
-                        </article>
-                    </div>
 
-                    <div class="col-md-6">
-                        <article class="card h-100 reveal">
-                            <div class="card-body p-4 p-lg-5">
-                                <div class="d-flex align-items-center justify-content-between mb-4">
-                                    <div class="feature-icon mb-0">
-                                        <i class="bi bi-github"></i>
-                                    </div>
+                            <a href="https://solunamc.de"
+                               class="btn btn-primary"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Visit SolunaMC
+                                <i class="bi bi-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </article>
 
-                                    <span class="status-badge">Open</span>
+                    <article class="card reveal">
+                        <div class="card-body">
+                            <div class="card-head">
+                                <div class="feature-icon">
+                                    <i class="bi bi-window"></i>
                                 </div>
 
-                                <h2 class="h3 fw-bold">More on GitHub</h2>
-
-                                <p class="text-body-secondary">
-                                    This site's source and other repositories
-                                    We maintain live on GitHub.
-                                </p>
-
-                                <div class="d-flex flex-wrap gap-2 mb-4">
-                                    <span class="tag">Open Source</span>
-                                    <span class="tag">Code</span>
-                                </div>
-
-                                <a href="https://github.com/MaximanuDE"
-                                   class="btn btn-secondary"
-                                   target="_blank"
-                                   rel="noopener noreferrer">
-                                    View GitHub Organisation
-                                    <i class="bi bi-arrow-up-right ms-1"></i>
-                                </a>
+                                <span class="status-badge">Active</span>
                             </div>
-                        </article>
-                    </div>
+
+                            <h2 class="card-title">My Website</h2>
+
+                            <p>
+                                My personal website featuring information
+                                about me, my work and my projects.
+                            </p>
+
+                            <div class="tag-list">
+                                <span class="tag">Personal</span>
+                                <span class="tag">Web</span>
+                                <span class="tag">Portfolio</span>
+                            </div>
+
+                            <a href="https://maxi.maximanu.de"
+                               class="btn btn-primary"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Visit Website
+                                <i class="bi bi-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </article>
+
+                    <article class="card reveal">
+                        <div class="card-body">
+                            <div class="card-head">
+                                <div class="feature-icon">
+                                    <i class="bi bi-github"></i>
+                                </div>
+
+                                <span class="status-badge">Open</span>
+                            </div>
+
+                            <h2 class="card-title">More on GitHub</h2>
+
+                            <p>
+                                This site's source and other repositories
+                                We maintain live on GitHub.
+                            </p>
+
+                            <div class="tag-list">
+                                <span class="tag">Open Source</span>
+                                <span class="tag">Code</span>
+                            </div>
+
+                            <a href="https://github.com/MaximanuDE"
+                               class="btn btn-secondary"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                View GitHub Organisation
+                                <i class="bi bi-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
@@ -179,7 +172,6 @@
 
     <div id="footer"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/main.js"></script>
 </body>
 </html>
