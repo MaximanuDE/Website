@@ -46,6 +46,11 @@ The website is built as a lightweight static website with a focus on a modern, r
 ├── css/
 │   └── style.css
 │
+├── fonts/              # self-hosted Inter, Space Grotesk, JetBrains Mono
+│
+├── vendor/
+│   └── bootstrap-icons/  # self-hosted Bootstrap Icons
+│
 ├── js/
 │   └── main.js
 │
